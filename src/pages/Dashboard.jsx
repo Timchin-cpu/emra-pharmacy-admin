@@ -1,53 +1,60 @@
-import { useState, useEffect } from 'react'
-import { dashboardAPI } from '../services/api'
-import { Package, ShoppingCart, Users, DollarSign } from 'lucide-react'
+import { useEffect, useState } from 'react';
+import { ShoppingCart, DollarSign, Package, Users } from 'lucide-react';
+import Card from '../components/ui/Card';
+import { dashboardAPI } from '../services/api';
+import './Dashboard.css';
 
 export default function Dashboard() {
-  const [stats, setStats] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [stats, setStats] = useState(null);
 
   useEffect(() => {
-    loadStats()
-  }, [])
+    loadStats();
+  }, []);
 
   const loadStats = async () => {
     try {
-      const { data } = await dashboardAPI.getStats()
-      setStats(data.data)
+      const { data } = await dashboardAPI.getStats();
+      setStats(data.data);
     } catch (error) {
-      console.error(error)
-    } finally {
-      setLoading(false)
+      console.error(error);
     }
-  }
-
-  if (loading) return <div className="loading"><div className="spinner" /></div>
-
-  const cards = [
-    { title: 'Заказы', value: stats.totalOrders, icon: ShoppingCart, color: '#10b981' },
-    { title: 'Выручка', value: `${stats.totalRevenue} ₸`, icon: DollarSign, color: '#6366f1' },
-    { title: 'Товары', value: stats.totalProducts, icon: Package, color: '#f59e0b' },
-    { title: 'Пользователи', value: stats.totalUsers, icon: Users, color: '#ec4899' },
-  ]
+  };
 
   return (
-    <div>
-      <h1 style={{ marginBottom: '32px' }}>Dashboard</h1>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '24px' }}>
-        {cards.map(card => (
-          <div key={card.title} className="card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
-              <div>
-                <p style={{ color: '#6b7280', fontSize: '14px' }}>{card.title}</p>
-                <h2 style={{ marginTop: '8px', fontSize: '32px' }}>{card.value}</h2>
-              </div>
-              <div style={{ padding: '12px', borderRadius: '8px', background: card.color + '20' }}>
-                <card.icon size={24} color={card.color} />
-              </div>
-            </div>
+    <div className="dashboard-page">
+      <h1>Dashboard</h1>
+      <p className="page-subtitle">Welcome back! Here's your overview.</p>
+      
+      <div className="metrics-grid">
+        <div className="metric-card">
+          <ShoppingCart size={24} className="metric-icon" />
+          <div>
+            <p className="metric-label">Total Orders</p>
+            <p className="metric-value">{stats?.totalOrders || '0'}</p>
           </div>
-        ))}
+        </div>
+        <div className="metric-card">
+          <DollarSign size={24} className="metric-icon" />
+          <div>
+            <p className="metric-label">Revenue</p>
+            <p className="metric-value">₽{stats?.revenue || '0'}</p>
+          </div>
+        </div>
+        <div className="metric-card">
+          <Package size={24} className="metric-icon" />
+          <div>
+            <p className="metric-label">Products</p>
+            <p className="metric-value">{stats?.products || '0'}</p>
+          </div>
+        </div>
+        <div className="metric-card">
+          <Users size={24} className="metric-icon" />
+          <div>
+            <p className="metric-label">Users</p>
+            <p className="metric-value">{stats?.users || '0'}</p>
+          </div>
+        </div>
       </div>
     </div>
-  )
+  );
 }
