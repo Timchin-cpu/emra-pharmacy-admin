@@ -19,7 +19,7 @@ export default function Dashboard() {
       console.error(error);
     }
   };
-
+// ва
   return (
     <div className="dashboard-page">
       <h1>Dashboard</h1>
